@@ -5,6 +5,4 @@ beautifulsoup4==4.12.3
 # Para criar a API
 fastapi==0.109.0
 uvicorn==0.27.0
-
-# Para manipular dados
-pandas==2.2.0
+pydantic==2.5.3

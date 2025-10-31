@@ -1,4 +1,4 @@
-import pandas as pd
+import csv
 from typing import List, Optional
 from api.models import Book
 
@@ -10,13 +10,16 @@ def load_books_from_csv(filepath: str = 'data/books.csv'):
     """Carrega os livros do CSV para memória"""
     global books_data
 
-    # Lê o CSV usando pandas
-    df = pd.read_csv(filepath)
+    # Lê o CSV usando biblioteca csv nativa
+    with open(filepath, 'r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        books_data = list(reader)
 
-    # Converte para lista de dicionários e adiciona ID
-    books_data = df.to_dict('records')
+    # Adiciona ID sequencial e converte tipos
     for i, book in enumerate(books_data, start=1):
-        book['id'] = i  # Adiciona ID sequencial
+        book['id'] = i
+        book['price'] = float(book['price'])
+        book['rating'] = int(book['rating'])
 
     print(f"✓ {len(books_data)} livros carregados do CSV")
 
