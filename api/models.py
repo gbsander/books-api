@@ -8,6 +8,7 @@ class Book(BaseModel):
     price: float  # Preço
     rating: int  # Rating de 1 a 5
     availability: str  # "In stock" ou "Out of stock"
+    category: str  # Categoria do livro
     image_url: str  # URL da imagem
 
     class Config:

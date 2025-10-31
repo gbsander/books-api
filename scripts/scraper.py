@@ -5,18 +5,39 @@ import time
 
 # URL base do site
 BASE_URL = "https://books.toscrape.com/catalogue/page-{}.html"
+SITE_BASE = "https://books.toscrape.com/catalogue/"
+
+def get_book_category(book_url):
+    """Busca a categoria de um livro específico"""
+    try:
+        response = requests.get(book_url)
+        if response.status_code != 200:
+            return "Unknown"
+
+        soup = BeautifulSoup(response.content, 'html.parser')
+        # A categoria está no breadcrumb
+        breadcrumb = soup.find('ul', class_='breadcrumb')
+        if breadcrumb:
+            # Pega o penúltimo item (último é o título do livro)
+            category_link = breadcrumb.find_all('a')
+            if len(category_link) >= 3:
+                return category_link[2].text.strip()
+        return "Unknown"
+    except:
+        return "Unknown"
 
 def scrape_books():
     """Função principal que faz o scraping de todos os livros"""
     all_books = []  # Lista para guardar todos os livros
     page = 1  # Começa na página 1
 
-    print("Iniciando scraping...")
+    print("Iniciando scraping com categorias...")
+    print("ATENÇÃO: Isso vai demorar ~10 minutos para processar 1000 livros")
 
     while True:
         # Monta a URL da página atual
         url = BASE_URL.format(page)
-        print(f"Scraping página {page}...")
+        print(f"\nScraping página {page}...")
 
         # Faz requisição HTTP
         response = requests.get(url)
@@ -32,7 +53,7 @@ def scrape_books():
         books = soup.find_all('article', class_='product_pod')
 
         # Para cada livro, extrai os dados
-        for book in books:
+        for idx, book in enumerate(books, 1):
             # Extrai título
             title = book.h3.a['title']
 
@@ -50,20 +71,33 @@ def scrape_books():
             # Extrai URL da imagem
             image_url = "https://books.toscrape.com/" + book.find('img')['src'].replace('../', '')
 
+            # Extrai URL do livro para buscar categoria
+            book_link = book.h3.a['href']
+            book_url = SITE_BASE + book_link
+
+            # Busca a categoria (isso adiciona uma requisição extra por livro)
+            category = get_book_category(book_url)
+
+            print(f"  [{idx}/{len(books)}] {title[:40]}... - {category}")
+
             # Cria um dicionário com todos os dados
             book_data = {
                 'title': title,
                 'price': price,
                 'rating': rating,
                 'availability': availability,
+                'category': category,
                 'image_url': image_url
             }
 
             # Adiciona à lista
             all_books.append(book_data)
 
+            # Pequeno delay para não sobrecarregar
+            time.sleep(0.1)
+
         page += 1  # Vai para próxima página
-        time.sleep(0.5)  # Espera meio segundo para não sobrecarregar o servidor
+        time.sleep(0.5)  # Espera meio segundo entre páginas
 
     print(f"\nTotal de livros coletados: {len(all_books)}")
     return all_books
@@ -77,8 +111,8 @@ def save_to_csv(books, filename='data/books.csv'):
 
     # Abre arquivo CSV para escrita
     with open(filename, 'w', newline='', encoding='utf-8') as file:
-        # Define as colunas
-        fieldnames = ['title', 'price', 'rating', 'availability', 'image_url']
+        # Define as colunas (agora com category)
+        fieldnames = ['title', 'price', 'rating', 'availability', 'category', 'image_url']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
 
         # Escreve cabeçalho

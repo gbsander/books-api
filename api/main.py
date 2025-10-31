@@ -61,24 +61,19 @@ def get_book(book_id: int):
 
 @app.get("/api/v1/categories")
 def list_categories():
-    """Lista todas as categorias de avaliação disponíveis
-
-    Nota: Como o scraping não inclui categorias do site,
-    retornamos categorias baseadas em ratings para demonstração.
-    """
+    """Lista todas as categorias de livros disponíveis"""
     books = get_all_books()
 
-    # Agrupa por rating e conta
+    # Agrupa por categoria e conta
     categories = {}
     for book in books:
-        rating = book.rating
-        rating_name = f"{rating} Star{'s' if rating != 1 else ''}"
+        category = book.category
 
-        if rating_name not in categories:
-            categories[rating_name] = 0
-        categories[rating_name] += 1
+        if category not in categories:
+            categories[category] = 0
+        categories[category] += 1
 
-    # Formata resposta
+    # Formata resposta ordenada por nome
     result = [
         {"name": name, "count": count}
         for name, count in sorted(categories.items())
