@@ -1,8 +1,8 @@
 # Para fazer web scraping
-requests==2.31.0
-beautifulsoup4==4.12.3
+requests>=2.31.0
+beautifulsoup4>=4.12.0
 
-# Para criar a API
-fastapi==0.109.0
-uvicorn==0.27.0
-pydantic==2.5.3
+# Para criar a API (versões compatíveis com Python 3.13)
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.9.0
