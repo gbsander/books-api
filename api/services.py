@@ -20,6 +20,9 @@ def load_books_from_csv(filepath: str = 'data/books.csv'):
         book['id'] = i
         book['price'] = float(book['price'])
         book['rating'] = int(book['rating'])
+        # Garante que category existe (retrocompatibilidade com CSV antigo)
+        if 'category' not in book or not book['category']:
+            book['category'] = 'Unknown'
 
     print(f"✓ {len(books_data)} livros carregados do CSV")
 
