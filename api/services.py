@@ -18,10 +18,18 @@ def load_books_from_csv(filepath: str = 'data/books.csv'):
     # Adiciona ID sequencial e converte tipos
     for i, book in enumerate(books_data, start=1):
         book['id'] = i
-        book['price'] = float(book['price'])
-        book['rating'] = int(book['rating'])
+        try:
+            book['price'] = float(book['price'])
+        except (ValueError, KeyError):
+            book['price'] = 0.0
+
+        try:
+            book['rating'] = int(book['rating'])
+        except (ValueError, KeyError):
+            book['rating'] = 0
+
         # Garante que category existe (retrocompatibilidade com CSV antigo)
-        if 'category' not in book or not book['category']:
+        if 'category' not in book or not book.get('category', '').strip():
             book['category'] = 'Unknown'
 
     print(f"✓ {len(books_data)} livros carregados do CSV")
