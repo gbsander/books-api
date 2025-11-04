@@ -1,5 +1,8 @@
 # Books API - Tech Challenge
 
+link do deploy: https://books-api-nvgy.onrender.com
+link do video: https://drive.google.com/file/d/1jFzWFenvz-ZBVhhDOGAxxjKZF34DO6hZ/view?usp=share_link
+
 API RESTful para consultar dados de livros extraídos do site [books.toscrape.com](https://books.toscrape.com/).
 
 ## 📋 Descrição do Projeto
