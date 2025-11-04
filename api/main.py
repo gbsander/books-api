@@ -14,12 +14,27 @@ app = FastAPI(
 @app.on_event("startup")
 def startup_event():
     """Executado quando a API inicia"""
-    print("Iniciando API...")
-    load_books_from_csv()
-    print("API pronta! Acesse http://localhost:8000/docs")
+    print("=" * 50)
+    print("🚀 Iniciando Books API...")
+    print("=" * 50)
+    try:
+        load_books_from_csv()
+        print("✅ API pronta!")
+        print("📊 Acesse /docs para documentação Swagger")
+    except Exception as e:
+        print(f"❌ ERRO no startup: {e}")
+        import traceback
+        traceback.print_exc()
+        raise
 
 
 # ========== ENDPOINTS ==========
+
+@app.get("/")
+def root():
+    """Endpoint raiz - usado para health check do Render"""
+    return {"message": "Books API está rodando!", "status": "ok"}
+
 
 @app.get("/api/v1/health", response_model=HealthResponse)
 def health_check():
